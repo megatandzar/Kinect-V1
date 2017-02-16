@@ -1,0 +1,57 @@
+//inspired by Daniel Shiffman Kinect V2 Tutorial
+
+import org.openkinect.freenect.*;
+import org.openkinect.freenect2.*;
+import org.openkinect.processing.*;
+import org.openkinect.tests.*;
+
+Kinect kinect;
+
+float minThresh = 480;
+float maxThresh = 830;
+PImage img;
+
+void setup()
+{
+  size(512, 424);
+  kinect = new Kinect(this);
+  kinect.initDepth();
+  kinect.enableIR(true);
+  kinect.enableColorDepth(true);
+}
+
+void draw()
+{
+  background(0);
+  img = createImage(kinect.width, kinect.height, RGB);
+  img.loadPixels();
+
+  //minThresh= map(mouseX, 0, width, 0, 2048);
+  //maxThresh= map(mouseY, 0, height, 0, 2048);
+
+  int [] depth = kinect.getRawDepth();
+
+  for (int x = 0; x < kinect.width; x++)
+  {
+    for (int y = 0; y < kinect.height; y++)
+    {
+      int offset = x + y * kinect.width;
+      int d = depth[offset];
+
+      if (d > minThresh && d < maxThresh)
+      {
+        img.pixels[offset] = color (random(255), random(255), random(255));
+      } else 
+      {
+        img.pixels[offset] = color (0);
+      }
+    }
+  }
+
+  img.loadPixels();
+  image(img, 0, 0);
+  
+  /* fill (255);
+   textSize(32);
+   text(minThresh + " " + maxThresh, 10, 64);*/
+}
